@@ -10,6 +10,8 @@ public interface ClientServiceI  {
 
     ClienteDto findByEmail(String email) ;
 
+    ClienteDto findBySharedKey(String email) ;
+
     Client save(ClienteDto clienteDto);
 
     Client update(ClienteDto clienteDto);

@@ -51,6 +51,20 @@ public class ClientService implements ClientServiceI {
                 .collect(Collectors.toList());*/
     }
 
+    @Override
+    public ClienteDto findBySharedKey(String sharedKey) {
+
+
+        var clients = clientJpaRepository.findById(sharedKey);
+        if (clients.isEmpty()) {
+            throw new ResourceNotFoundException( "V-102", "Cliente No Encontrado");
+        }
+
+        return toClientDto(clients.get());
+                /*.stream()
+                .map(this::toClientDto)
+                .collect(Collectors.toList());*/
+    }
 
     @Override
     public Client save(ClienteDto clienteDto) {

@@ -6,13 +6,22 @@ import com.gml.entity.ResponseError;
 import com.gml.exception.RequestException;
 import com.gml.exception.ResourceNotFoundException;
 import com.gml.service.ClientServiceI;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -43,6 +52,17 @@ public class ClienteController {
 
             ClienteDto byEmail = personService.findByEmail(email);
             return ResponseEntity.status(HttpStatus.OK).body(byEmail);
+
+
+    }
+
+    @GetMapping("/v1/client/sharedKey/{sharedKey}")
+    public ResponseEntity<Object> getClientById(@Valid @NotNull @PathVariable String sharedKey) {
+        Objects.requireNonNull(sharedKey, "Shared key es requerido");
+        //    Assert.isTrue(numeroDocumento<=0, "Numero documento no puede ser null  ");
+
+        ClienteDto bySharedKey= personService.findBySharedKey(sharedKey);
+        return ResponseEntity.status(HttpStatus.OK).body(bySharedKey);
 
 
     }
@@ -92,4 +112,21 @@ public class ClienteController {
         }
         return new ResponseEntity<>(createdTodo, HttpStatus.CREATED);
     }
+
+
+    @GetMapping("/v1/exportCSV")
+    public void exportCSV(HttpServletResponse response) throws CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, IOException {
+        String fileName = "employee-data.csv";
+
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "");
+
+        StatefulBeanToCsv<ClienteDto> writer = new StatefulBeanToCsvBuilder<ClienteDto>(response.getWriter())
+                .withSeparator(CSVWriter.DEFAULT_SEPARATOR)
+                .withOrderedResults(true)
+                .build();
+
+        writer.write(personService.findAll());
+    }
+
 }
