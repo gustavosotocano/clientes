@@ -76,10 +76,7 @@ public class ClienteController {
 
             }
 
-            ResponseEntity<Object> BAD_REQUEST = validateEmailFormat(clienteDto);
-
-            if (BAD_REQUEST != null) return BAD_REQUEST;
-
+            validateEmailFormat(clienteDto);
             createdTodo = personService.save(clienteDto);
        }catch (ResponseStatusException e){
            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -87,13 +84,13 @@ public class ClienteController {
         return new ResponseEntity<>(createdTodo, HttpStatus.CREATED);
     }
 
-    private static ResponseEntity<Object> validateEmailFormat(ClienteDto clienteDto) {
+    private static void validateEmailFormat(ClienteDto clienteDto) {
         Matcher matcher = EMAIL_PATTERN.matcher(clienteDto.getEmail());
         if(!matcher.matches()){
             throw new RequestException("003","Email no tiene un formato correcto");
 
         }
-        return null;
+
     }
 
     @PutMapping ("/v1/client")
@@ -103,8 +100,8 @@ public class ClienteController {
             if(clienteDto.getStarted().compareTo(clienteDto.getEnded()) <0){
                   throw new RequestException("v-001","fecha inicio no puede ser mayor que la fecha de fin");
             }
-            ResponseEntity<Object> BAD_REQUEST = validateEmailFormat(clienteDto);
-            if (BAD_REQUEST != null) return BAD_REQUEST;
+            validateEmailFormat(clienteDto);
+
 
             createdTodo = personService.update(clienteDto);
         }catch (ResponseStatusException e){

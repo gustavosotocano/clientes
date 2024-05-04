@@ -23,7 +23,7 @@ public class ClientApplication {
 	CommandLineRunner init( ClientJpaRepository clientJpaRepository) {
 		return args -> {
 			Stream.of("John", "Julie", "Jennifer", "Helen", "Rachel").forEach(name -> {
-				Client client = new Client(name,name , name.toLowerCase() + "@domain.com",
+				Client client = new Client(name, name.toLowerCase() + "@domain.com",
 						""+name.length(),new Date(),new Date(),new Date(),name,new Date());
 				clientJpaRepository.save(client);
 			});

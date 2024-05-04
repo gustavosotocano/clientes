@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,18 @@ public class ClientService implements ClientServiceI {
         if (Objects.nonNull(clients)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente Ya Creado");
         }
+        String[]names = clienteDto.getBussinessId().split(" ");
+        String lastName="";
+        if(names.length==1){
+          lastName  = names[0];
+        }else if(names.length==2){
+            lastName  = names[1];
+        }else if(names.length>2){
+            lastName  = names[2];
+        }
+         clienteDto.setAdded(new Date());
+        String initial= names[0].substring(0, 1);
+        clienteDto.setSharedKey((initial+lastName).toLowerCase(Locale.ROOT));
 
         return clientJpaRepository.save(toClient(clienteDto));
     }
@@ -109,7 +122,7 @@ public class ClientService implements ClientServiceI {
                 .added(clienteDto.getAdded())
                 .started(clienteDto.getStarted())
                 .ended(clienteDto.getEnded())
-                .name(clienteDto.getName())
+
                 .build();
     }
 
@@ -133,7 +146,7 @@ return to;
                 .added(client.getAdded())
                 .started(client.getStarted())
                 .ended(client.getEnded())
-                .name(client.getName())
+
                 .build();
     }
 }
