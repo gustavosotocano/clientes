@@ -19,13 +19,11 @@ import java.util.Date;
 public class Client {
     @Id
     private String sharedKey;
-    @NotNull
-    private String bussinessId;
     private String email;
     private String phone;
     private Date added;
     private Date started;
     private Date ended;
-    private String name;
+    private String bussinessId;
     private Date updated;
 }

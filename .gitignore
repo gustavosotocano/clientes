@@ -1,0 +1,3 @@
+target/
+/client-back/target/
+client-back/target/classes/application.properties

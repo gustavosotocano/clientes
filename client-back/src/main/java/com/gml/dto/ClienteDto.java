@@ -12,7 +12,7 @@ import java.util.Date;
 @Builder
 @Getter
 public class ClienteDto {
-    @NotNull(message = "It must not be null")
+
     private String sharedKey;
     @NotNull(message = "It must not be null")
     private String bussinessId;
@@ -20,13 +20,12 @@ public class ClienteDto {
     private String email;
     @NotNull(message = "It must not be null")
     private String phone;
-    @NotNull(message = "It must not be null")
+
     private Date added;
     @NotNull(message = "It must not be null")
     private Date started;
     @NotNull(message = "It must not be null")
     private Date ended;
-    @NotNull(message = "It must not be null")
-    private String name;
+
 
 }
