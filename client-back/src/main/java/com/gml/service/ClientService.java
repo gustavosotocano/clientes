@@ -6,6 +6,7 @@ import com.gml.exception.RequestException;
 import com.gml.exception.ResourceNotFoundException;
 import com.gml.repository.ClientJpaRepository;
 import com.gml.util.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -17,12 +18,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ClientService implements ClientServiceI {
 
 
     private final ClientJpaRepository clientJpaRepository;
 
-    private static Long idCounter = 0L;
+
 
     public ClientService(ClientJpaRepository clientJpaRepository) {
         this.clientJpaRepository = clientJpaRepository;
@@ -73,7 +75,7 @@ public class ClientService implements ClientServiceI {
         var clients = clientJpaRepository
                 .findByEmail(clienteDto.getEmail());
         if (Objects.nonNull(clients)) {
-            throw new RequestException("005", "Cliente Ya Creado");
+            throw new RequestException("004", "Client is already created");
         }
         String[]names = clienteDto.getBussinessId().split(" ");
         String lastName="";
@@ -105,7 +107,7 @@ public class ClientService implements ClientServiceI {
                 .findByEmail(clienteDto.getEmail());
 
         if(Objects.nonNull(clientEmail) && (!client.get().getSharedKey().equals(clientEmail.getSharedKey()))){
-            throw new RequestException("005", "Email pertenece a otro cliente");
+            throw new RequestException("006", "Email belongs to another client");
         }
 
 
@@ -135,9 +137,9 @@ public class ClientService implements ClientServiceI {
 
         try {
             date = outputFormat.parse(date.toString());
-            System.out.println("Parsed Date: " + date);
+            log.error("Parsed Date: {}", date);
         } catch (ParseException e) {
-            System.out.println("Error parsing date: " + e.getMessage());
+            log.error("Error parsing date: {} " , e.getMessage());
         }
 
 return date;

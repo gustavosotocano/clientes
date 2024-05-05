@@ -11,7 +11,7 @@
 	<groupId>com.gml</groupId>
 	<artifactId>clientes</artifactId>
 	<version>0.0.1</version>
-	<name>crud</name>
+	<name>clients</name>
 	<description>Project crud Test</description>
 	<properties>
 		<java.version>17</java.version>

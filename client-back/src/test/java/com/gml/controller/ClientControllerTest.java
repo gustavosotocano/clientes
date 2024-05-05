@@ -135,14 +135,11 @@ return clienteDtos;
     public void addClientTest() throws Exception {
         String json= """
                 {
-                
                 "bussinessId":"jhon doe",
                 "email":"gustavo@domain.com",
                 "phone":"adolfo",
-                "added":"2024-05-01",
                 "started":"2024-05-25",
-                "ended":"2024-05-25",
-               
+                "ended":"2024-05-25"
                 }
                 """;
          mockMvc.perform(post("/v1/client").contentType(MediaType.APPLICATION_JSON)
