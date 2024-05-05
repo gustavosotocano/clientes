@@ -47,7 +47,8 @@ public class ClienteController {
 
     @GetMapping("/v1/client/email/{email}")
     public ResponseEntity<Object> getClientByEmail(@Valid @NotNull @PathVariable String email) {
-        Objects.requireNonNull(email, "Email es requerido");
+        Objects.requireNonNull(email, "email is required");
+
     //    Assert.isTrue(numeroDocumento<=0, "Numero documento no puede ser null  ");
 
             ClienteDto byEmail = personService.findByEmail(email);
@@ -73,13 +74,12 @@ public class ClienteController {
         try {
             if(clienteDto.getStarted().compareTo(clienteDto.getEnded()) >0){
                throw new RequestException("002","fecha inicio no puede ser mayor que la fecha de fin");
-
             }
 
             validateEmailFormat(clienteDto);
             createdTodo = personService.save(clienteDto);
        }catch (ResponseStatusException e){
-           return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
        }
         return new ResponseEntity<>(createdTodo, HttpStatus.CREATED);
     }

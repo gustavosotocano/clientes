@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.Date;
@@ -18,7 +19,7 @@ public class ClientApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ClientApplication.class, args);
 	}
-
+/*
 	@Bean
 	CommandLineRunner init( ClientJpaRepository clientJpaRepository) {
 		return args -> {
@@ -29,5 +30,5 @@ public class ClientApplication {
 			});
 			//clientJpaRepository.findAll().forEach(System.out::println);
 		};
-	}
+	}*/
 }

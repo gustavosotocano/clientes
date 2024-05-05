@@ -2,12 +2,14 @@ package com.gml.service;
 
 import com.gml.dto.ClienteDto;
 import com.gml.entity.Client;
+import com.gml.exception.RequestException;
 import com.gml.exception.ResourceNotFoundException;
 import com.gml.repository.ClientJpaRepository;
-import org.springframework.http.HttpStatus;
+import com.gml.util.Utils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -29,9 +31,7 @@ public class ClientService implements ClientServiceI {
     @Override
     public List<ClienteDto> findAll() {
 
-        //if (personaLst.isEmpty()) {
-         //   throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No tiene Personas registradas", null);
-       // }
+
         return clientJpaRepository.findAll().stream()
                 .map(this::toClientDto)
                 .collect(Collectors.toList());
@@ -43,7 +43,7 @@ public class ClientService implements ClientServiceI {
 
         var clients = clientJpaRepository.findByEmail(email);
         if (Objects.isNull(clients)) {
-            throw new ResourceNotFoundException( "V-102", "Cliente No Encontrado");
+            throw new ResourceNotFoundException( "001", "Client Not Found");
         }
         var personLst = clientJpaRepository.findByEmail(email);
         return toClientDto(personLst);
@@ -69,13 +69,11 @@ public class ClientService implements ClientServiceI {
 
     @Override
     public Client save(ClienteDto clienteDto) {
-        if (Objects.isNull(clienteDto.getSharedKey())) {
-            clienteDto.setSharedKey(clienteDto.getSharedKey());
-        }
+
         var clients = clientJpaRepository
                 .findByEmail(clienteDto.getEmail());
         if (Objects.nonNull(clients)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente Ya Creado");
+            throw new RequestException("005", "Cliente Ya Creado");
         }
         String[]names = clienteDto.getBussinessId().split(" ");
         String lastName="";
@@ -90,7 +88,7 @@ public class ClientService implements ClientServiceI {
         String initial= names[0].substring(0, 1);
         clienteDto.setSharedKey((initial+lastName).toLowerCase(Locale.ROOT));
 
-        return clientJpaRepository.save(toClient(clienteDto));
+        return clientJpaRepository.save(Utils.toClient(clienteDto));
     }
 
     @Override
@@ -100,53 +98,48 @@ public class ClientService implements ClientServiceI {
                 .findById(clienteDto.getSharedKey());
 
         if (client.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cliente No existe");
+
+            throw new RequestException("005", "Client Does not exist");
         }
         var clientEmail = clientJpaRepository
                 .findByEmail(clienteDto.getEmail());
 
         if(Objects.nonNull(clientEmail) && (!client.get().getSharedKey().equals(clientEmail.getSharedKey()))){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email pertenece a otro cliente");
+            throw new RequestException("005", "Email pertenece a otro cliente");
         }
 
 
-        return clientJpaRepository.save(toClientUpdate(clienteDto,client.get()));
+        return clientJpaRepository.save(Utils.toClientUpdate(clienteDto,client.get()));
     }
 
-    private Client toClient(ClienteDto clienteDto) {
-        return Client.builder()
-                .sharedKey(clienteDto.getSharedKey())
-                .bussinessId(clienteDto.getBussinessId())
-                .email(clienteDto.getEmail())
-                .phone(clienteDto.getPhone())
-                .added(clienteDto.getAdded())
-                .started(clienteDto.getStarted())
-                .ended(clienteDto.getEnded())
-
-                .build();
-    }
-
-    private Client toClientUpdate(ClienteDto from ,Client to) {
-      to.setEnded(from.getEnded());
-      to.setEmail(from.getEmail());
-      to.setPhone(from.getPhone());
-      to.setStarted(from.getStarted());
-      to.setBussinessId(from.getBussinessId());
-      to.setUpdated(new Date());
-return to;
-    }
 
 
     private ClienteDto toClientDto(Client client) {
+
+
         return ClienteDto.builder()
                 .sharedKey(client.getSharedKey())
                 .bussinessId(client.getBussinessId())
                 .email(client.getEmail())
                 .phone(client.getPhone())
-                .added(client.getAdded())
-                .started(client.getStarted())
+                .added(changeFormatDate(client.getAdded()))
+                .started(changeFormatDate(client.getStarted()))
                 .ended(client.getEnded())
 
                 .build();
+    }
+
+    private Date changeFormatDate(Date date) {
+
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MMM-dd-yyyy");
+
+        try {
+            date = outputFormat.parse(date.toString());
+            System.out.println("Parsed Date: " + date);
+        } catch (ParseException e) {
+            System.out.println("Error parsing date: " + e.getMessage());
+        }
+
+return date;
     }
 }
