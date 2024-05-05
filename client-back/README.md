@@ -27,7 +27,7 @@ To Access the application
 The application open  port 8090
 ``` 
   
-  addPersona
+  add Client
 
 ```
 http://localhost:8090/v1/client/
@@ -45,7 +45,7 @@ http://localhost:8090/v1/client/
 "name":"cra 1a113 #72-84"
 }
 ```
-  findAll clientes
+  findAll clients
 ```
 http://localhost:8090/v1/client 
 ```
@@ -64,6 +64,6 @@ http://localhost/v1/client/sharedKey/{sharedKey}
 
 ```
 docker build -t clients
-docker run  -p 8090:8090 amaris
+docker run  -p 8090:8090 clients
 For find the ip address
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' containerName 
