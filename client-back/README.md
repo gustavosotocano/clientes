@@ -1,4 +1,4 @@
-## Amaris-crud in Java
+## Clients in Java
 
 This application contains an implementation for a Spring application 
  
